@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>ERX_CS_List</title>
+<!-- css library -->
+<link rel="stylesheet" href="css_lib/bootstrap.min.css">
+<link rel="stylesheet" href="css_lib/font-awesome.min.css">
+<link rel="stylesheet" href="css_lib/laydate.css">
+<link rel="stylesheet" href="css_lib/pages.css">
+<!-- custom css -->
+<link rel="stylesheet" href="css_code/ERX_CS_List.css">
+</head>
+<body>
+	<div id="app">
+		<h3 class="text_center">耗材評估報告查詢</h3>
+		<table class="table table-bordered no_bottom">
+			<tr>
+				<td>
+					專案名稱
+				</td>
+				<td>
+					<input type="text" disabled v-bind:value="project_name">
+				</td>
+				<td>
+					產品名稱
+				</td>
+				<td>
+					<input type="text" v-model="pd_name">
+				</td>
+				<td>
+					廠商名稱
+				</td>
+				<td>
+					<input type="text" v-model="vendor">
+				</td>
+				<td>
+					表單編號
+				</td>
+				<td>
+					<input type="text" name="bill_no">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					機種名稱
+				</td>
+				<td>
+					<input type="text" v-model="model">
+				</td>
+				<td>
+					鴻海料號
+				</td>
+				<td>
+					<input type="text" v-model="hh_no">
+				</td>
+				<td>
+					創建人員
+				</td>
+				<td>
+					<input type="text" v-model="creator">
+				</td>
+				<td>
+					創建時間
+				</td>
+				<td>
+					<input type="text" id="create_date" v-model="create_date" placeholder="請選擇時間範圍">
+				</td>
+			</tr>
+		</table>
+
+		<div class="text_center" style="margin:10px 0">
+			<button class="btn btn-danger" v-on:click="open_add">
+				<i class="icon-plus icon-large"></i>
+				新增
+			</button>
+			<button class="btn btn-default" v-on:click="query_CS_Main_list(1)">
+				<i class="icon-search icon-large"></i>
+				條件查詢
+			</button>
+		</div>
+
+		<div id="table_cont" style="overflow: auto; width: 100%; height: 60vh;">
+			<table class="table table-bordered-xbr table-hover" style="border-collapse: separate;">
+				<tbody>
+					<tr v-for="x, index in cs_main_list">
+						<td class="tbody_left">{{ index + 1 }}</td>
+						<td class="tbody_left">{{ x.bill_no }}</td>
+						<td>{{ x.project_name }}</td>
+						<td>{{ x.model }}</td>
+						<td>{{ x.pd_name }}</td>
+						<td>{{ x.hh_no }}</td>
+						<td>{{ x.vendor }}</td>
+						<td>{{ x.creator_name }}({{ x.creator }})</td>
+						<td>{{ x.create_date }}</td>
+						<td>{{ x.bill_status }}</td>
+						<td>
+							<button class="btn btn-default" v-on:click="open_show(x.pkid)">查看</button>
+							<button class="btn btn-default" v-if="x.creator == userid && x.bill_status == '未提交'"
+								v-on:click="open_edit(x.pkid)">編輯</button>
+							<button class="btn btn-default" v-if="x.creator == userid && x.bill_status == '未提交'"
+								v-on:click="delete_rpt(x.pkid)">刪除</button>
+							<button class="btn btn-default" v-on:click="query_au_record(x.pkid)">審核記錄</button>
+						</td>
+					</tr>
+				</tbody>
+				<thead>
+					<tr>
+						<th class="thead_top_left">序號</th>
+						<th class="thead_top_left">表單編號</th>
+						<th style="background: #eee;">專案名稱</th>
+						<th style="background: #eee;">機種名稱</th>
+						<th style="background: #eee;">產品名稱</th>
+						<th style="background: #eee;">鴻海料號</th>
+						<th style="background: #eee;">廠商名稱</th>
+						<th style="background: #eee;">創建人員</th>
+						<th style="background: #eee;">創建時間</th>
+						<th style="background: #eee;">表單狀態</th>
+						<th style="background: #eee;">
+							操作
+						</th>
+					</tr>
+				</thead>
+			</table>
+		</div>
+		
+		 <!-- 分页DOM -->
+    	<div id="pagination" class="pagination"></div>
+    	
+    	<!-- 審核記錄模态框（Modal） -->
+		<div class="modal fade" id="au_record_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog" style="width: 100%;">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+						<h4 class="modal-title" id="myModalLabel" style="text-align: center;">審核記錄</h4>
+					</div>
+					<div class="modal-body">
+						<table class="table table-bordered table-hover">
+							<tr>
+								<td>序號</td>
+								<td>審核類型</td>
+								<td>審核人員</td>
+								<td>操作類型</td>
+								<td>操作時間</td>
+								<td>駁回備註</td>
+							</tr>
+							<tr v-for="x, index in modal_au_record_list" 
+								v-bind:class="{'red_text': x.opt_type_name == '被駁回待提交' || x.opt_type_name == '待審核'}">
+								<td>{{ index + 1 }}</td>
+								<td>{{ x.au_type_name }}</td>
+								<td>{{ x.emp_name }}({{ x.emp_no }})</td>
+								<td>{{ x.opt_type_name }}</td>
+								<td>{{ x.create_date }}</td>
+								<td>{{ x.rej_memo }}</td>
+							</tr>
+						</table>
+					</div>
+					<div class="modal-footer" style="text-align: center;">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>				
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div>
+		<!-- /.modal -->
+	</div>
+</body>
+<!-- JS library -->
+<script type="text/javascript" src="js_lib/jquery-1.12.1.js"></script>
+<script type="text/javascript" src="js_lib/bootstrap.min.js"></script>
+<script type="text/javascript" src="js_lib/ajaxfileupload.js"></script>
+<script type="text/javascript" src="js_lib/jquery.fileDownload.js"></script>
+<script type="text/javascript" src="js_lib/laydate.js"></script>
+<script type="text/javascript" src="js_lib/pages.js"></script>
+<script type="text/javascript" src="js_lib/axios.min.js"></script>
+<script type="text/javascript" src="js_lib/vue.js"></script>
+<!-- <script type="text/javascript" src="js_lib/vue.min.js"></script> -->
+<!-- custom JS -->
+<script type="text/javascript" src="js_code/ERX_CS_List.js"></script>
+</html>

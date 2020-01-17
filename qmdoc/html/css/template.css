@@ -1,0 +1,38 @@
+h1, h2, h3, h4, h5, h6 {
+	margin-top: 0rem !important;
+	margin-bottom: 0rem !important;
+	background-color: #737373;
+	padding-top: 2rem;
+}
+
+#app {
+	width: 100vw;
+	height: 100vh;
+	background-color: #DDDDDD;
+}
+
+#header {
+	height: 10vh;
+	text-align: center;
+	background-color: #AFD9EE;
+}
+
+#nav {
+	width: 20vw;
+	height: 80vh;
+	background-color: #EB9316;
+	float: left;
+}
+
+#section {
+	width: 80vw;
+	height: 80vh;
+	background-color: #31B0D5;
+	float: left;
+}
+
+#footer {
+	height: 10vh;
+	background-color: #3E8F3E;
+	clear: both;
+}

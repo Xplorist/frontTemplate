@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>ERX_Mail_Dept_Emp_Set</title>
+<!-- css library -->
+<link rel="stylesheet" href="css_lib/bootstrap.min.css">
+<link rel="stylesheet" href="css_lib/laydate.css">
+<link rel="stylesheet" href="css_lib/pages.css">
+<!-- custom css -->
+<link rel="stylesheet" href="css_code/ERX_Mail_Dept_Emp_Set.css">
+</head>
+<body>
+	<div id="app" style="height: 100vh; overflow: hidden; border: 1px solid gray;">
+		<h3 style="text-align: center;">分發單位及通知人員設置</h3>
+		<table class="table table-bordered">
+			<tr>
+				<td style="width: 50%;">
+					<div>
+						報告類型：
+						<select v-model="RPT_type_selected" v-on:change="query_mail_dept_list">
+							<option value="">請選擇</option>
+							<option v-for="x in RPT_type_list" v-bind:value="x.rpt_type_no">{{ x.rpt_type_name }}</option>
+						</select>
+					</div>
+					<div>
+						單位名稱：<input v-model="dept_name_input" placeholder="輸入要新增的分發單位">
+						<button v-on:click="add_dept">新增</button>
+						<button v-on:click="delete_dept">刪除</button>
+					</div>
+					<div id="tb_container1" style="height: 80vh; overflow: auto;">
+						<table class="table table-bordered-xbr table-hover" style="border-collapse: separate;">
+							<tbody>
+								<tr v-for="x, index in dept_list" v-on:click="dept_click(x)">
+									<td>{{ index + 1 }}</td>
+									<td><input type="radio" v-bind:value="x.pkid" v-model="dept_no_selected"></td>
+									<td>{{ x.rpt_type_name }}</td>
+									<td>{{ x.mail_dept_name }}</td>
+								</tr>
+							</tbody>						
+							<thead>
+								<tr style="background: white;">
+									<th>序號</th>
+									<th>選擇</th>
+									<th>報告類型</th>
+									<th>單位名稱</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+				</td>
+				<td style="width: 50%;">
+					<div>
+						單位類型：<span>{{ dept_name_selected }}</span>
+					</div>
+					<div>
+						人員工號：<input v-model="emp_no_input" placeholder="請輸入要新增的人員工號" onkeyup="value=value.toUpperCase()">
+						<span>{{ emp_name_input }}</span>
+						<button v-on:click="query_emp_name">新增</button>
+					</div>
+					<div id="tb_container2" style="height: 80vh; overflow: auto;">
+						<table class="table table-bordered-xbr table-hover" style="border-collapse: separate;">
+							<tbody>
+								<tr v-for="x, index in emp_list">
+									<td>{{ index + 1 }}</td>
+									<td>{{ x.rpt_type_name }}</td>
+									<td>{{ x.mail_dept_name }}</td>
+									<td>{{ x.emp_name }}({{ x.emp_no }})</td>
+									<td>{{ x.emp_email }}</td>
+									<td>
+										<button v-on:click="delete_emp(x.pkid)">刪除</button>
+									</td>
+								</tr>
+							</tbody>
+							<thead>
+								<tr style="background: white;">
+									<td>序號</td>
+									<td>報告類型</td>
+									<td>分發單位</td>
+									<td>人員信息</td>
+									<td>人員郵箱</td>
+									<td>操作</td>
+								</tr>
+							</thead>
+						</table>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</div>
+</body>
+<!-- JS library -->
+<script type="text/javascript" src="js_lib/jquery-1.12.1.js"></script>
+<script type="text/javascript" src="js_lib/ajaxfileupload.js"></script>
+<script type="text/javascript" src="js_lib/jquery.fileDownload.js"></script>
+<script type="text/javascript" src="js_lib/laydate.js"></script>
+<script type="text/javascript" src="js_lib/pages.js"></script>
+<script type="text/javascript" src="js_lib/axios.min.js"></script>
+<!-- <script type="text/javascript" src="js_lib/vue.js"></script> -->
+<script type="text/javascript" src="js_lib/vue.min.js"></script>
+<!-- custom JS -->
+<script type="text/javascript" src="js_code/ERX_Mail_Dept_Emp_Set.js"></script>
+</html>

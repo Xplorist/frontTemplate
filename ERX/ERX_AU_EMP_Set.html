@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>ERX_AU_EMP_Set</title>
+<!-- css library -->
+<link rel="stylesheet" href="css_lib/bootstrap.min.css">
+<link rel="stylesheet" href="css_lib/font-awesome.min.css">
+<link rel="stylesheet" href="css_lib/laydate.css">
+<link rel="stylesheet" href="css_lib/pages.css">
+<!-- custom css -->
+<link rel="stylesheet" href="css_code/ERX_AU_EMP_Set.css">
+</head>
+<body>
+	<div id="app" style="height: 100vh; overflow: hidden; border: 1px solid gray;">
+	    <h3 style="text-align: center;">
+	    	【評估報告、耗材評估報告、SWR執行單】審核人設置
+	    </h3>
+		<div class="panel panel-default">
+			<div class="panel-body">
+		       	報告類型：
+		       	<select v-model="RPT_type_selected" v-on:change="query_AU_type_list">
+		       		<option value=''>請選擇</option>
+		       		<option v-bind:value="x.rpt_type_no" v-for="x in RPT_type_list">{{ x.rpt_type_name }}</option>
+		       	</select>
+		       	審核類型：
+		       	<select v-model="AU_type_selected" v-on:change="query_emp_list">
+		       		<option value=''>請選擇</option>
+		       		<option v-if="x.list_order != '0'" v-bind:value="x.au_type_no" v-for="x in AU_type_list">{{ x.au_type_name }}</option>
+		       	</select>
+		    </div>
+		</div>
+		<div>
+			人員工號：
+			<input v-model="emp_no_input" onkeyup="value=value.toUpperCase()">
+			<!-- 人員姓名： -->
+			<span>{{ emp_name_input }}</span>
+			<button v-on:click="query_emp_name">新增</button>
+		</div>
+		<div id="tb_container" style="height: 80vh; overflow: auto;">
+			<table class="table table-bordered-xbr table-hover" style="border-collapse: separate;">
+				<tbody>
+					<tr v-for="x, index in au_emp_list">
+						<td>{{ index + 1 }}</td>
+						<td>{{ x.rpt_type_name }}</td>
+						<td>{{ x.au_type_name }}</td>
+						<td>{{ x.emp_name }}({{ x.emp_no }})</td>
+						<td>
+							<button v-on:click="deleteEmp(x.pkid)">刪除</button>
+						</td>
+					</tr>
+				</tbody>
+				<thead>
+					<tr style="background: white;">
+						<th>序號</th>
+						<th>報告類型</th>
+						<th>審核類型</th>
+						<th>人員信息</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+			</table>
+		</div>
+	</div>
+</body>
+<!-- JS library -->
+<script type="text/javascript" src="js_lib/jquery-1.12.1.js"></script>
+<script type="text/javascript" src="js_lib/ajaxfileupload.js"></script>
+<script type="text/javascript" src="js_lib/jquery.fileDownload.js"></script>
+<script type="text/javascript" src="js_lib/laydate.js"></script>
+<script type="text/javascript" src="js_lib/pages.js"></script>
+<script type="text/javascript" src="js_lib/axios.min.js"></script>
+<!-- <script type="text/javascript" src="js_lib/vue.js"></script> -->
+<script type="text/javascript" src="js_lib/vue.min.js"></script>
+<!-- custom JS -->
+<script type="text/javascript" src="js_code/ERX_AU_EMP_Set.js"></script>
+</html>

@@ -1,0 +1,42 @@
+.table-bordered-xbr td,th {
+	border: 1px solid #ddd !important;
+	padding: 2px 2px;
+	text-align: center;
+	vertical-align: middle !important;
+	height: 50px;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	font-size:13px;
+}
+
+input {
+	width: 100%;
+}
+
+.text_center {
+	text-align: center;
+}
+
+.no_bottom {
+	margin-bottom: 0px !important;
+}
+
+.red_text {
+	color: red;
+}
+
+/* 表頭左上角固定位置 */
+.thead_top_left {
+	background-color: #eee;
+}
+
+/* 表頭行固定位置 */
+.thead_top {
+	background-color: #eee;
+}
+
+/* 表體左列固定位置 */
+.tbody_left {
+	background-color: #eee;
+}

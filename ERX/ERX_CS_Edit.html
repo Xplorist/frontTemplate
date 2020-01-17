@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>ERX_CS_Edit</title>
+    <!-- css library -->
+    <link rel="stylesheet" href="css_lib/bootstrap.min.css">
+    <link rel="stylesheet" href="css_lib/font-awesome.min.css">
+    <link rel="stylesheet" href="css_lib/laydate.css">
+    <link rel="stylesheet" href="css_lib/pages.css">
+    <!-- custom css -->
+    <link rel="stylesheet" href="css_code/ERX_CS_Edit.css">
+</head>
+
+<body>
+    <div id="app" style="height: 100vh; overflow: hidden;">
+        <table class="table table-bordered" style="height: 100vh; overflow: auto;">
+            <tr>
+                <td colspan="2">
+                    <button v-on:click="goBack">返回</button>
+                    <span>專案：{{ project_name }}</span>
+                    <span v-if="page_type == 'rej'" style="color: red; font-weight: bold;">
+                        駁回原因：{{ rej_memo }}
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 70%;">
+                    <div style="height: 90vh; overflow: auto;">
+                        <table class="table table-bordered-black table-nobottom">
+                            <tr>
+                                <td colspan="4" style="border-bottom: 0px !important;">
+                                    <div class="text-header-blue-h1">
+                                        MacI耗材評估報告({{resultID == '2' ? 'RE':'AC'}})
+                                        <br>
+                                        <P style="font-size: 14px;">MATERIAL EVALUATION REPORT</P>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" style="border-top: 0px !important; border-bottom: 0px !important;">
+                                    <div>
+                                        <div style="float: left;"><label>分發單位：</label></div>
+                                        <table class="table table-nobordered table-nobottom">
+                                            <tr v-for="x in mail_dept_list_array">
+                                                <td v-for="y in x">
+                                                    <label>
+                                                        <input type="checkbox" v-bind:value="y.pkid" v-model="mail_dept_selected">
+                                                        {{ y.mail_dept_name }}
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border-top: 0px !important; border-right: 0px !important;">
+                                </td>
+                                <!--                                 <td style="border:none !important;">
+                                </td> -->
+                                <td style="border:none !important;">
+                                </td>
+                                <td>
+                                    執行單編號
+                                </td>
+                                <td>
+                                    {{ bill_no }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="colored-td" >
+                                    評估類別(Evaluate Type)
+                                    <i style="color: red; font-weight: bold;">*</i>
+                                </td>
+
+                                <td colspan="3" class="checkboxSty">
+                                    <table width="80%" class="PGSty">
+                                        <tr v-for="i in (Math.ceil(eval_type_list.length/5))">
+                                            <td v-for="item in eval_type_list.slice(0+((i-1)*5), 5+((i-1)*5))" :key="item.pkid" :colspan="item.other_flag == 'Y'? '2':''">
+                                                <label>
+                                                    <input type="checkbox" :value="item.pkid" v-model="eval_type_selected"> 
+                                                    {{item.eval_type_name}}
+                                                </label>
+                                                <input v-if="item.other_flag == 'Y'"  type="text" :disabled="eval_type_selected.indexOf(item.pkid) < 0" v-model="eval_type_other" style="width: 80px" >
+                                            </td>
+                                            
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="colored-td">
+                                    廠商(Vendor)
+                                    <i style="color: red; font-weight: bold;">*</i>
+                                </td>
+                                <td>
+                                    <input type="text" v-model="vendor">
+                                </td>
+                                <td class="colored-td">
+                                    評估次數(No.of times)
+                                    <i style="color: red; font-weight: bold;">*</i>
+                                </td>
+                                <td>
+                                    <table class="table-nobordered">
+                                        <tr>
+                                            <td><label>
+                                                    <input type="radio" name="times" value="1" v-model="eval_num">
+                                                    1st
+                                                </label></td>
+                                            <td><label>
+                                                    <input type="radio" name="times" value="2" v-model="eval_num">
+                                                    2st
+                                                </label></td>
+                                            <td><label>
+                                                    <input type="radio" name="times" value="其它" v-model="eval_num">
+                                                    其它
+                                                </label></td>
+                                            <td><label>
+                                                    <input style="width: 80px;" type="number" :disabled="eval_num != '其它'" placeholder="請輸入數字" v-model="eval_num_other">
+                                                </label></td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="colored-td">
+                                    機種(Products)<i style="color: red; font-weight: bold;">*</i>
+                                </td>
+                                <td style="border-right: none !important;">
+                                    <input type="text" v-model="model">
+                                </td>
+                                <td colspan="2" style="border-left: none !important;"></td>
+                            </tr>
+                            <tr>
+                                <td class="colored-td">
+                                    產品名稱<i style="color: red; font-weight: bold;">*</i>
+                                </td>
+                                <td>
+                                    <input type="text" v-model="pd_name" >
+                                </td>
+                                <td class="colored-td">
+                                    需求提出單位(I.R.No)<i style="color: red;font-size: bold">*</i>
+                                </td>
+                                <td>
+                                    <input type="text" v-model="req_dept" >
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="colored-td">
+                                    鴻海料號(Part No.)<i style="color: red; font-weight: bold;">*</i>
+                                </td>
+                                <td>
+                                    <input type="text" v-model="hh_no">
+                                </td>
+                                <td class="colored-td">
+                                    評估原因(T.R.R.No)<i style="color: red; font-weight: bold;">*</i>
+                                </td>
+                                <td>
+                                    <input type="text" v-model="eval_reason">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="colored-td">
+                                    版次(Rev) <i style="color: red; font-weight: bold;">*</i>
+                                </td>
+                                <td style="border-right: none !important;">
+                                    <input type="text" v-model="version">
+                                </td>
+                                <td colspan="2" style="border-left: none !important;"></td>
+                            </tr>
+                            <tr>
+                                <td class="colored-td">
+                                    已評估廠家數量(Tooling No.) <i style="color: red; font-weight: bold;">*</i>
+                                </td>
+                                <td>
+                                    <input type="text" v-model="eval_done_vendor_num">
+                                </td>
+                                <td colspan="2" rowspan="2">
+                                    <table class="SPSty" width="100%">
+                                        <tr v-for="i in (Math.ceil(pd_type_list.length / 2))">
+                                            <td v-for="item in pd_type_list.slice(0+((i-1)*2) ,2+((i-1)*2))" >
+                                                <label>
+                                                    <input type="checkbox" :value="item.pkid" v-model="pd_type_selected">
+                                                    {{item.pd_type_name}}
+                                                </label>
+                                                <input v-if="item.other_flag == 'Y'" type="text" style="width: 80px" :disabled="pd_type_selected.indexOf(item.pkid) < 0" v-model="pd_type_other" >
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="colored-td">
+                                    執行單號(Excute No.)
+                                </td>
+                                <td>
+                                    <input type="text" v-model="exec_no">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="colored-td" style="border-right: 0 !important;">
+                                    結果(Result)<i style="color: red; font-weight: bold;">*</i>
+                                </td>
+                                <td colspan="3" class="colored-td" style="border-left: 0 !important;"></td>
+                            </tr>
+                            <tr style="border-color: #ccc !important;">
+                                <td style="border-right: 0 !important; border-bottom-color: #acacac">
+                                    <label>
+                                    	<!-- v-bind:disabled="page_type == 'rej'"的目的是為了避免駁回後修改result導致ac_re_flag的變化，
+                                    	從而導致複雜的審核類型及其審核路徑的變化，其實不要這個限制也行，只不過邏輯太複雜，不想寫，至少要考慮
+                                    	三種情況，AC變RE，RE變AC，駁回路徑的類型是否在事業處主管1和2,還要處理末尾最後一個審核路徑的問題，這樣
+                                    	做規避是為了簡化邏輯，如果客戶強行要求要變加上駁回時切換result這個功能，也是可以實現的，只不過很複雜而已，
+                                    	到時候再說吧 -->
+                                        <input type="radio" name="result" v-bind:disabled="page_type == 'rej'" value="0" v-model="resultID">
+                                        完全認可 Fully Approved
+                                    </label>
+                                </td>
+                                <td style="border-left: 0 !important;border-bottom-color: #acacac;" colspan="3"></td>
+                            </tr>
+                            <tr style="border-color: #ccc !important;">
+                                <td colspan="4" style="border-bottom-color: #acacac;">
+                                    <p style="margin-left: 5%; text-align: left;">如有疑問者，請於三日內向原MacI耗材評估報告單位（AC）提出，若無疑異議，本單據將為制定檢驗規範依據 </p>
+                                    <p style="margin-left: 5%; text-align: left; text-indent: 2em;">In case of doubt,please submit your comments to the original Evaluation Dept Within 3 days. Should there be no comments,the evaluation shall be the basis for Inspection Specification.</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border-right: 0 !important; border-bottom-color: #acacac">
+                                    <label>
+                                        <input type="radio" name="result" v-bind:disabled="page_type == 'rej'" value="1" v-model="resultID">
+                                        條件認可 Conditional Approved
+                                    </label>
+                                </td>
+                                <td style="border-left: 0 !important;border-bottom-color: #acacac;" colspan="3"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" style="border-bottom-color: #acacac;">
+                                    <table class="gray-color" style="margin-left: 5%; width: 90%">
+                                        <tr>
+                                            <td>
+                                                限時(Due time)<i style="color: red;font-weight: bold;">*</i>
+                                            </td>
+                                            <td>
+                                                <input type="text" v-model="time_limit" :disabled="resultID != '1'">
+                                            </td>
+                                            <td>
+                                                原因(Reason)
+                                            </td>
+                                            <td>
+                                                <input type="text" v-model="time_limit_reason" :disabled="resultID != '1'">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                限量(Quantity Limitation)<i style="color: red;font-weight: bold;">*</i>
+                                            </td>
+                                            <td>
+                                                <input type="number" v-model="amnt_limit" placeholder="請輸入數字" :disabled="resultID != '1'">
+                                            </td>
+                                            <td>
+                                                原因(Reason)
+                                            </td>
+                                            <td>
+                                                <input type="text" v-model="amnt_limit_reason" :disabled="resultID != '1'">
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border-right: 0 !important; border-bottom-color: #acacac">
+                                    <label>
+                                        <input type="radio" name="result" v-bind:disabled="page_type == 'rej'" value="2" v-model="resultID">
+                                        樣品不合格 Disqualified
+                                    </label>
+                                </td>
+                                <td style="border-left: 0 !important;border-bottom-color: #acacac;" colspan="3"></td>
+                            </tr>
+                            <tr style="border-color: #ccc !important;">
+                                <td colspan="4" style="border-bottom-color: #acacac;">
+                                    <div style="margin-left: 5%; text-align: left;">
+                                        請於
+                                        <input type="number" style="width: 80px;" :disabled="resultID != '2'" placeholder="請輸入數字" v-model="smp_ng_days">
+                                        日內再送樣，請與
+                                        <label v-for="item in smp_ng_dept_list">
+                                            <input type="checkbox" :value="item.pkid" v-model="smp_ng_dept_selected" :disabled="resultID != '2'">
+                                            {{item.dept_name}}
+                                        </label>
+                                        聯繫，以解決對策之導，否則超過期限，視同放棄供應權論。
+                                    </div>
+                                    <p style="margin-left: 5%; text-align: left; text-indent: 2em;">Please resubmit your samples within days.Should improvement not be possible,please contact following Dept to work out solution.Otherwise it will be regarded as waiver for the right to supply,if solution could not be provided within the time limit.</p>
+                                    <div style="display: flex; justify-content: space-around;">
+                                        <div style="text-align: left;">
+                                            <p>Design Dept</p>
+                                            <p>Production Planning Dept</p>
+                                            <p>Manufacture Engineering Dept</p>
+                                        </div>
+                                        <div style="display: flex;">
+                                            <label style="align-self: flex-end;">
+                                                TEL
+                                                <input type="number" :disabled="resultID != '2'" v-model="smp_ng_tel">
+                                            </label>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border-right: 0 !important; border-bottom-color: #acacac; font-weight: bold; color: #ccc;">
+                                    HSF資料確認
+                                </td>
+                                <td style="border-left: 0 !important;border-bottom-color: #acacac;" colspan="3"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" style="border-bottom-color: #acacac;">
+                                    <table class="gray-color table-left" style="margin-left: 5%; width: 90%; color: #ccc;" >
+                                        <tr>
+                                            <td>
+                                                1.環保保證書EPW(新聞開發商)
+                                            </td>
+                                            <td>
+                                                <label style="margin-right: 15px">
+                                                    <input type="radio" name="confirm0" value="OK" v-model="hsf_res_1" disabled>OK
+                                                </label>
+                                                <label>
+                                                    <input type="radio" name="confirm0" value="NG" v-model="hsf_res_1" disabled>NG
+                                                </label>
+                                            </td>
+                                            <td>
+                                                2.環境管理物質成分展開表(新聞開發商)
+                                            </td>
+                                            <td>
+                                                <label style="margin-right: 15px">
+                                                    <input type="radio" name="confirm1" value="OK" disabled v-model="hsf_res_2">OK
+                                                </label>
+                                                <label>
+                                                    <input type="radio" name="confirm1" value="NG" disabled v-model="hsf_res_2">NG
+                                                </label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                3.RoHS
+                                            </td>
+                                            <td>
+                                                <label style="margin-right: 15px">
+                                                    <input type="radio" name="confirm2" value="OK" disabled v-model="hsf_res_3">OK
+                                                </label>
+                                                <label>
+                                                    <input type="radio" name="confirm2" value="NG" disabled v-model="hsf_res_3">NG
+                                                </label>
+                                            </td>
+                                            <td>
+                                                4.HF(非金屬材料)
+                                            </td>
+                                            <td>
+                                                <label style="margin-right: 15px">
+                                                    <input type="radio" name="confirm3" value="OK" disabled v-model="hsf_res_4">OK
+                                                </label>
+                                                <label>
+                                                    <input type="radio" name="confirm3" value="NG" disabled v-model="hsf_res_4">NG
+                                                </label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                5.其它
+                                            </td>
+                                            <td>
+                                                <label style="margin-right: 15px">
+                                                    <input type="radio" name="confirm4" value="OK" disabled v-model="hsf_res_5">OK
+                                                </label>
+                                                <label>
+                                                    <input type="radio" name="confirm4" value="NG" disabled v-model="hsf_res_5">NG
+                                                </label>
+                                            </td>
+                                            <td>
+                                                6.樣品滿足客戶環保需求
+                                            </td>
+                                            <td>
+                                                <label style="margin-right: 15px">
+                                                    <input type="radio" name="confirm5" value="OK" disabled v-model="hsf_res_6">OK
+                                                </label>
+                                                <label>
+                                                    <input type="radio" name="confirm5" value="NG" disabled v-model="hsf_res_6">NG
+                                                </label>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border-right: 0 !important; border-bottom-color: #acacac; font-weight: bold; color: #ccc;">
+                                    HSF風險評估
+                                </td>
+                                <td style="border-left: 0 !important;border-bottom-color: #acacac;" colspan="3"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" style="text-align: left !important; color: #ccc; ">
+                                    <div style="margin-left: 5%; width: 30% ;display: flex; justify-content: space-around;">
+                                        <label>
+                                            <input type="radio" name="risk" value="高" disabled v-model="hsf_risk">
+                                            高
+                                        </label>
+                                        <label>
+                                            <input type="radio" name="risk" value="中" disabled v-model="hsf_risk">
+                                            中
+                                        </label>
+                                        <label>
+                                            <input type="radio" name="risk" value="低" disabled v-model="hsf_risk">
+                                            低
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" style="padding: 0">
+                                    <table frame="void" style="width: 100%">
+                                        <tr>
+                                            <td width="15%" class="colored-td">
+                                                備註(Remark)
+                                            </td>
+                                            <td width="35%" colspan="2">
+                                                <textarea style="width: 100%;" v-model="memo"></textarea>
+                                            </td>
+                                            <td width="15%">備註(QE)</td>
+                                            <td width="35%" colspan="2" style="color: #ccc;">
+                                               <!--  {{memo_qe}} -->
+                                                <textarea style="width: 100%;" v-model="memo_qe" disabled></textarea>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td width="15%" class="colored-td" style="border-right: 1px solid #000 !important;">評估單位<i style="color: red; font-weight: bold;">*</i>
+                                                <br>
+                                                (Department)
+                                            </td>
+                                            <td width="15%" style="border-right: none !important;">
+                                                <select style="width: 100%" v-model="eval_dept">
+                                                    <option value='' >請選擇</option>
+                                                    <option value="MacI工程技術中心">MacI工程技術中心</option>
+                                                </select>
+                                            </td>
+                                            <td colspan="4" width="80%" style="border-left: none !important;">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td width="15%" class="colored-td">
+                                                簽核人員
+                                            </td>
+                                            <td colspan="5">
+                                                <table class="SPSty" width="100%">
+                                                    <tr v-if="ac_re_flag != 'RE'">
+                                                        <td>事業處主管核准2</td>
+                                                        <td>
+                                                            <span v-for="x in CS_AU_9_list">
+                                                                {{ x.emp_name }}({{ x.emp_no }})
+                                                            </span>
+                                                        </td>
+                                                        <td>事業處主管核准1</td>
+                                                        <td>
+                                                            <span v-for="x in CS_AU_8_list">
+                                                                {{ x.emp_name }}({{ x.emp_no }})
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>工程技術中心處級主管審核</td>
+                                                        <td>
+                                                            <span v-for="x in CS_AU_7_list">
+                                                                {{ x.emp_name }}({{ x.emp_no }})
+                                                            </span>
+                                                        </td>
+                                                        <td>品保主管審核</td>
+                                                        <td>
+                                                            <span v-for="x in CS_AU_6_list">
+                                                                {{ x.emp_name }}({{ x.emp_no }})
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>工程技術中心主管審核</td>
+                                                        <td>
+                                                            <span v-for="x in CS_AU_5_list">
+                                                                {{ x.emp_name }}({{ x.emp_no }})
+                                                            </span>
+                                                        </td>
+                                                        <td>QE確認</td>
+                                                        <td>
+                                                            <span v-for="x in CS_AU_4_list">
+                                                                {{ x.emp_name }}({{ x.emp_no }})
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>工標主管審核</td>
+                                                        <td>
+                                                            <span v-for="x in CS_AU_3_list">
+                                                                {{ x.emp_name }}({{ x.emp_no }})
+                                                            </span>
+                                                        </td>
+                                                        <td>RoHS確認</td>
+                                                        <td>
+                                                            <span v-for="x in CS_AU_2_list">
+                                                                {{ x.emp_name }}({{ x.emp_no }})
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>SQM確認</td>
+                                                        <td>
+                                                            <span v-for="x in CS_AU_1_list">
+                                                                {{ x.emp_name }}({{ x.emp_no }})
+                                                            </span>
+                                                        </td>
+                                                        <td>承辦人</td>
+                                                        <td style="color: blue">
+                                                            {{ maker_info.emp_name }}({{ maker_info.emp_no }})
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                        <div style="text-align: center;margin: 10px 0;">
+                            <button v-on:click="save_data(0)" class="btn btn-danger">
+                                保 存
+                            </button>
+                            <button v-on:click="save_data(1)" class="btn btn-danger">
+                                提 交
+                            </button>
+                            <button v-on:click="goBack" class="btn btn-danger">
+                                取 消
+                            </button>
+                        </div>
+                    </div>
+                </td>
+                <td style="width: 30%;">
+                    <div style="height: 90vh; overflow: auto;">
+                        <div class="panel panel-default" style="margin-bottom: 0px;">
+                            <div class="panel-heading">
+                                <h3 class="panel-title" style="font-weight: bold;">請選擇參與者</h3>
+                            </div>
+                            <ul class="list-group" v-if="x.list_order != '0'" v-for="x in au_type_emp_list">
+                                <li class="list-group-item">
+                                    <div>
+                                        <span style="color: blue; font-weight: bold;">{{ x.au_type_name }}</span>
+                                        <span style="float: right;" v-show="x.rej_flag != 'pass'">
+                                            <button v-on:click="open_au_emp_modal(x.au_type_no)">選簽核人員</button>
+                                        </span>
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <div>
+                                        <span>&nbsp;</span>
+                                        <label v-for="y in x.path_list">
+                                            {{ y.emp_name }}({{ y.emp_no }})
+                                            <span v-show="y.rej_flag == 'rej'" style="color: red;">【駁回】</span>
+                                            &nbsp;&nbsp;
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+                            <div class="panel-footer">
+                                默認上次所選擇的簽核人員：
+                                <input type="radio" value="Y" v-model="isLastChecked" v-on:change="load_path">是
+                                <input type="radio" value="N" v-model="isLastChecked" v-on:change="clear_path">否
+                            </div>
+                        </div>
+                        <div class="panel panel-default" style="margin-bottom: 0px;">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">上傳附件</h3>
+                            </div>
+                            <div class="panel-body">
+                                <button v-on:click="open_file_modal">上傳</button>
+                                <table class="table table-bordered table-nobottom">
+                                    <tbody>
+                                        <tr v-for="x, index in file_list">
+                                            <td>{{ index + 1 }}</td>
+                                            <td>
+                                                <a v-on:click="download_file(x)">{{ x.file_origin_name }}</a>
+                                            </td>
+                                            <td>
+                                                <button v-on:click="delete_file(x)">刪除</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <thead>
+                                        <tr>
+                                            <td>序號</td>
+                                            <td>文件</td>
+                                            <td>操作</td>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <!-- 審核人員模态框（Modal） -->
+        <div class="modal fade" id="AU_EMP_Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title" id="myModalLabel">{{ modal_au_type_name }}人員設置</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="panel panel-default" style="margin-bottom: 0px;">
+                            已選擇：<br>&nbsp;&nbsp;
+                            <label v-for="x in modal_au_emp_list_selected">
+                                {{ x.emp_name }}({{ x.emp_no }})&nbsp;&nbsp;
+                            </label>
+                        </div>
+                        <div class="panel panel-default" style="margin-bottom: 0px;">
+                            人員列表：<br>&nbsp;&nbsp;
+                            <label v-for="x in modal_au_emp_list">
+                                <input type="checkbox" v-bind:value="x" v-model="modal_au_emp_list_selected">
+                                {{ x.emp_name }}({{ x.emp_no }})&nbsp;&nbsp;
+                            </label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" v-on:click="ensure_au_emp_modal">確定</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+        <!-- 附件上傳模态框 -->
+        <div class="modal fade" id="file_upload_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title" id="myModalLabel">附件上傳</h4>
+                    </div>
+                    <div class="modal-body">
+                        <input type="file" id="file" name="file">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" v-on:click="upload_file">上傳</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+    </div>
+</body>
+<!-- JS library -->
+<script type="text/javascript" src="js_lib/jquery-1.12.1.js"></script>
+<script type="text/javascript" src="js_lib/bootstrap.min.js"></script>
+<script type="text/javascript" src="js_lib/ajaxfileupload.js"></script>
+<script type="text/javascript" src="js_lib/jquery.fileDownload.js"></script>
+<script type="text/javascript" src="js_lib/laydate.js"></script>
+<script type="text/javascript" src="js_lib/pages.js"></script>
+<script type="text/javascript" src="js_lib/axios.min.js"></script>
+<script type="text/javascript" src="js_lib/vue.js"></script>
+<!-- <script type="text/javascript" src="js_lib/vue.min.js"></script> -->
+<!-- custom JS -->
+<script type="text/javascript" src="js_code/ERX_CS_Edit.js"></script>
+
+</html>

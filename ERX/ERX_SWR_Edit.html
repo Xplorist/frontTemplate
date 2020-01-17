@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>ERX_SWR_Edit</title>
+<!-- css library -->
+<link rel="stylesheet" href="css_lib/bootstrap.min.css">
+<link rel="stylesheet" href="css_lib/font-awesome.min.css">
+<link rel="stylesheet" href="css_lib/laydate.css">
+<link rel="stylesheet" href="css_lib/pages.css">
+<!-- custom css -->
+<link rel="stylesheet" href="css_code/ERX_SWR_Edit.css">
+</head>
+<body>
+	<div id="app" style="height: 100vh; overflow: hidden;">
+		<table class="table table-bordered" style="height: 100vh; overflow: auto;">
+			<tr>
+				<td colspan="2" style="height: 10vh; overflow: auto;">
+					<button v-on:click="goBack">返回</button>
+					<span>專案：{{  project_name }}</span>
+					<span v-if="page_type == 'rej'" style="color: red; font-weight: bold;">
+						駁回原因：{{ rej_memo }}
+					</span>
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 70%;">
+					<div style="height: 90vh; overflow: auto;">
+						<table class="table table-bordered-black table-nobottom">
+							<tr>
+								<td colspan="7" style="border-bottom: 0px !important;">
+									<div class="text-header-blue-h1">MacI SWR執行單(CD)</div>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="7" style="border-top: 0px !important; border-bottom: 0px !important;">
+									<div>
+										<div style="float: left;"><label>分發單位：</label></div>
+										<table class="table table-nobordered table-nobottom">
+											<tr v-for="x in mail_dept_list_array">
+												<td v-for="y in x">
+													<label>
+														<input type="checkbox" v-bind:value="y.pkid"  v-model="mail_dept_selected">
+														{{ y.mail_dept_name }}
+													</label>
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td style="border-top: 0px !important; border-right: 0px !important; width: 20vh;">
+								</td>
+								<td style="border-top: 0px !important; border-right: 0px !important;border-left: 0px !important; width: 20vh;">
+								</td>
+								<td style="border-top: 0px !important; border-right: 0px !important;border-left: 0px !important; width: 20vh;">
+								</td>
+								<td style="border-top: 0px !important; border-right: 0px !important;border-left: 0px !important; width: 20vh;">
+								</td>
+								<td style="border-top: 0px !important; border-left: 0px !important; width: 30vh;">
+								</td>
+								<td style="width: 20vh;">
+									執行單編號
+								</td>
+								<td style="width: 30vh;">
+									{{ bill_no }}
+								</td>
+							</tr>
+							<tr>
+								<td style="" class="colored-td" rowspan="7">
+										需
+										<br>
+										求
+										<br>
+										單
+										<br>
+										位
+										<br>
+										填
+										<br>
+										寫
+								</td>
+								<td class="colored-td">
+									需求提出單位
+									<i style="color: red; font-weight: bold;">*</i>
+								</td>
+								<td >
+									<input type="text" v-model="req_dept">
+								</td>
+								<td class="colored-td">
+									執行階段
+									<i style="color: red; font-weight: bold;">*</i>
+								</td>
+								<td colspan="3">
+									<label>
+										<input type="radio" v-model="exec_phase" value="量產開發階段">
+										量產開發階段
+									</label>
+									<label>
+										<input type="radio" v-model="exec_phase" value="量產後階段">
+										量產後階段
+									</label>
+								</td>
+							</tr>
+							<tr>
+								<td class="colored-td">
+									表單階段
+									<i v-if="exec_phase != '量產後階段'" style="color: red; font-weight: bold;">*</i>
+								</td>
+								<td colspan="5" style="text-align: left !important;">
+									<select v-model="bill_phase_1" :disabled="exec_phase == '量產後階段'">
+										<option value="">--請選擇--</option>
+										<option value="EVT">EVT</option>
+										<option value="DVT">DVT</option>
+										<option value="PVT">PVT</option>
+										<option value="PROTO">PROTO</option>
+										<option value="MP">MP</option>
+									</select>
+									<select v-model="bill_phase_2" :disabled="exec_phase == '量產後階段'">
+										<option value="">--請選擇--</option>
+										<option value="I">I</option>
+										<option value="II">II</option>
+										<option value="III">III</option>
+										<option value="IV">IV</option>
+										<option value="V">V</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td class="colored-td">
+									目的<i style="color: red; font-weight: bold;">*</i>
+								</td>
+								<td > 
+									<label>
+										<input type="radio" v-model="target" value="客戶需求">
+										客戶需求
+									</label>
+									<label>
+										<input type="radio" v-model="target" value="內部需求">
+										內部需求
+									</label>
+								</td>
+								<td class="colored-td">
+									需求部門/人員
+								</td>
+								<td>
+									<input type="text" v-model="req_dept_emp">
+								</td>
+								<td class="colored-td">
+									需求說明
+								</td>
+								<td>
+									<input type="text" v-model="req_desc">
+								</td>
+							</tr>
+							<tr>
+								<td class="colored-td">
+									機種名稱<i style="color: red; font-weight: bold;">*</i>
+								</td>
+								<td>
+									<input type="text" v-model="model_name">
+								</td>
+								<td class="colored-td">
+									專案代碼<i style="color: red;font-size: bold">*</i>
+								</td>
+								<td>
+									<input type="text" v-model="project_code">
+								</td>
+								<td class="colored-td">
+									專案代碼版次<i style="color: red; font-size: bold">*</i>
+								</td>
+								<td>
+									<input type="text" v-model="project_code_ver">
+								</td>
+							</tr>
+							<tr>
+								<td class="colored-td">
+									主旨<i style="color: red; font-weight: bold;">*</i>
+								</td>
+								<td>
+									<input type="text" v-model="theme">
+								</td>
+								<td class="colored-td">
+									執行單位<i style="color: red; font-weight: bold;">*</i>
+								</td>
+								<td>
+									<input type="text" v-model="exec_dept">
+								</td>
+								<td class="colored-td">
+									需求日期<i style="color: red; font-weight: bold;">*</i>
+								</td>
+								<td>
+									<input type="date" v-model="req_date">
+								</td>
+							</tr>
+							<tr>
+								<td class="colored-td">
+									SWR類型 <i style="color: red; font-weight: bold;">*</i>
+								</td>
+								<td colspan="3">
+									<label>
+										<input type="radio" v-model="swr_type" value="重工">
+										重工
+									</label>
+									<label>
+										<input type="radio" v-model="swr_type" value="特殊作業文件發行">
+										特殊作業文件發行
+									</label>
+									<label>
+										<input type="radio" v-model="swr_type" value="其他">
+										其他
+										<input type="text" :disabled="swr_type != '其他'" v-model="swr_type_other">
+									</label>
+								</td>
+								<td class="colored-td">有效期<i style="color: red; font-weight: bold;">*</i>
+								</td>
+								<td>
+									<input type="date" v-model="valid_period">
+								</td>
+							</tr>
+							<tr>
+								<td class="colored-td">
+									內容
+								</td>
+								<td colspan="5">
+									<textarea class="input-text-fullwidth" v-model="content"></textarea>
+								</td>
+							</tr>
+							<tr>
+								<td class="colored-td">
+									簽核人員
+								</td>
+								<td colspan="6">
+									<table id="signed-personnel" class="input-text-fullwidth">
+										<tr>
+											<td width="20%">
+												產品處單位主管核准2
+											</td>
+											<td style="color: blue">
+												<span v-for="x in SWR_AU_5_list">
+													{{ x.emp_name }}({{ x.emp_no }})
+												</span>
+											</td>
+											<td width="20%">
+												產品處單位主管核准1
+											</td>
+											<td style="color: blue">
+												<span v-for="x in SWR_AU_4_list">
+													{{ x.emp_name }}({{ x.emp_no }})
+												</span>
+											</td>
+											<td width="20%">
+												工程/品保/執行單位審核
+											</td>
+											<td style="color: blue">
+												<span v-for="x in SWR_AU_3_list">
+													{{ x.emp_name }}({{ x.emp_no }})
+												</span>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												提出單位主管審核
+											</td>
+											<td style="color: blue">
+												<span v-for="x in SWR_AU_2_list">
+													{{ x.emp_name }}({{ x.emp_no }})
+												</span>
+											</td>
+											<td>
+												管理員審核
+											</td>
+											<td style="color: blue">
+												<span v-for="x in SWR_AU_1_list">
+													{{ x.emp_name }}({{ x.emp_no }})
+												</span>
+											</td>
+											<td >
+												承辦
+											</td>
+											<td style="color: blue">
+												{{ maker_info.emp_name }}({{ maker_info.emp_no }})
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+						<div style="text-align: center;margin: 10px 0;">
+							<button class="btn btn-danger" @click="save_data(0)">
+								保 存
+							</button>
+							<button class="btn btn-danger" @click="save_data(1)">
+								提 交
+							</button>
+							<button class="btn btn-danger" @click="goBack()">
+								取 消
+							</button>
+						</div>
+					</div>
+				</td>
+				<td style="width: 30%;">
+					<div style="height: 90vh; overflow: auto;">
+						<div class="panel panel-default" style="margin-bottom: 0px;">
+						    <div class="panel-heading">
+						        <h3 class="panel-title" style="font-weight: bold;">請選擇參與者</h3>
+						    </div>
+						    <ul class="list-group" v-if="x.list_order != '0'" v-for="x in au_type_emp_list">
+						        <li class="list-group-item">
+						        	<div>
+							        	<span style="color: blue; font-weight: bold;">{{ x.au_type_name }}</span>
+							        	<span style="float: right;" v-show="x.rej_flag != 'pass'">
+								        	<button v-on:click="open_au_emp_modal(x.au_type_no)">選簽核人員</button>
+							        	</span>
+						        	</div>
+						        </li>
+						        <li class="list-group-item">
+						        	<div>
+						        		<span>&nbsp;</span>
+						        		<label v-for="y in x.path_list">
+						        			{{ y.emp_name }}({{ y.emp_no }})
+						        			<span v-show="y.rej_flag == 'rej'" style="color: red;">【駁回】</span>
+						        			&nbsp;&nbsp;
+						        		</label>
+						        	</div>
+						        </li>
+						    </ul>
+							<div class="panel-footer">
+								默認上次所選擇的簽核人員：
+								<input type="radio" value="Y" v-model="isLastChecked" v-on:change="load_path">是
+								<input type="radio" value="N" v-model="isLastChecked" v-on:change="clear_path">否
+							</div>
+						</div>
+						<div class="panel panel-default" style="margin-bottom: 0px;">
+							<div class="panel-heading">
+						        <h3 class="panel-title">上傳附件</h3>
+						    </div>
+						    <div class="panel-body">
+						        <button v-on:click="open_file_modal">上傳</button>
+						        <table class="table table-bordered table-nobottom">
+						        	<tbody>
+						        		<tr v-for="x, index in file_list">
+						        			<td>{{ index + 1 }}</td>
+						        			<td>
+						        				<a v-on:click="download_file(x)">{{ x.file_origin_name }}</a>
+						        			</td>
+						        			<td>
+						        				<button v-on:click="delete_file(x)">刪除</button>
+						        			</td>
+						        		</tr>
+						        	</tbody>
+						        	<thead>
+						        		<tr>
+						        			<td>序號</td>
+						        			<td>文件</td>
+						        			<td>操作</td>
+						        		</tr>
+						        	</thead>
+						        </table>
+						    </div>
+						</div>
+					</div>
+				</td>
+			</tr>
+		</table>
+		
+		<!-- 審核人員模态框（Modal） -->
+		<div class="modal fade" id="AU_EMP_Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+						<h4 class="modal-title" id="myModalLabel">{{ modal_au_type_name }}人員設置</h4>
+					</div>
+					<div class="modal-body">
+						<div class="panel panel-default" style="margin-bottom: 0px;">
+							已選擇：<br>&nbsp;&nbsp;
+							<label v-for="x in modal_au_emp_list_selected">
+								{{ x.emp_name }}({{ x.emp_no }})&nbsp;&nbsp;
+							</label>
+						</div>
+						<div class="panel panel-default" style="margin-bottom: 0px;">
+							人員列表：<br>&nbsp;&nbsp;
+							<label v-for="x in modal_au_emp_list">
+								<input type="checkbox" v-bind:value="x" v-model="modal_au_emp_list_selected">
+								{{ x.emp_name }}({{ x.emp_no }})&nbsp;&nbsp;
+							</label>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" v-on:click="ensure_au_emp_modal">確定</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div>
+		<!-- /.modal -->
+		
+		<!-- 附件上傳模态框 -->
+		<div class="modal fade" id="file_upload_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+						<h4 class="modal-title" id="myModalLabel">附件上傳</h4>
+					</div>
+					<div class="modal-body">
+						<input type="file" id="file" name="file">
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" v-on:click="upload_file">上傳</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div>
+		<!-- /.modal -->
+		
+	</div>
+</body>
+<!-- JS library -->
+<script type="text/javascript" src="js_lib/jquery-1.12.1.js"></script>
+<script type="text/javascript" src="js_lib/bootstrap.min.js"></script>
+<script type="text/javascript" src="js_lib/ajaxfileupload.js"></script>
+<script type="text/javascript" src="js_lib/jquery.fileDownload.js"></script>
+<script type="text/javascript" src="js_lib/laydate.js"></script>
+<script type="text/javascript" src="js_lib/pages.js"></script>
+<script type="text/javascript" src="js_lib/axios.min.js"></script>
+<script type="text/javascript" src="js_lib/vue.js"></script>
+<!-- <script type="text/javascript" src="js_lib/vue.min.js"></script> -->
+<!-- custom JS -->
+<script type="text/javascript" src="js_code/ERX_SWR_Edit.js"></script>
+</html>

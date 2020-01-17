@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>QM_DOC_Edit</title>
+<!-- css library -->
+<link rel="stylesheet" href="css_lib/bootstrap.min.css">
+<link rel="stylesheet" href="./css_lib/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="css_lib/laydate.css">
+<link rel="stylesheet" href="css_lib/pages.css">
+<!-- custom css -->
+<link rel="stylesheet" href="css_code/QM_DOC_Edit.css">
+</head>
+<body>
+<div id="app" style="height: 100vh; overflow: hidden;">
+	<!-- table 佈局 -->
+	<table class="table table-bordered" style="height: 100vh;">
+		<tr><!-- 返回欄 -->
+			<td colspan="2">
+				<button class="btn btn-default" v-on:click="goBack()">返回</button>
+				
+			</td>
+		</tr>
+		<tr><!-- 內容欄 -->
+			<td style="width: 70%;">
+				<div style="height: 90vh; overflow: auto;">
+					<table class="table table-bordered-center">
+						<tr>
+							<td>
+								<div style="float: left; font-size: 2.625rem;">
+									<i class="fa fa-newspaper-o"></i>文件信息
+								</div>
+								<table class="table table-bordered-center">
+									<tr>
+										<td>文件類型<i class="fa fa-asterisk red-star"></i></td>
+										<td>
+											<select v-model="doc_type" class="input-text-fullwidth">
+												<option value="">請選擇</option>
+												<option v-for="x in doc_type_list" v-bind:value="x.name">{{ x.name }}</option>
+											</select>
+										</td>
+										<td>廠區<i class="fa fa-asterisk red-star"></i></td>
+										<td>
+											<select v-model="factory" class="input-text-fullwidth">
+												<option value="">請選擇</option>
+												<option v-for="x in factory_list" v-bind:value="x.name">{{ x.name }}</option>
+											</select>
+										</td>
+									</tr>
+									<tr>
+										<td>專案<i class="fa fa-asterisk red-star"></i></td>
+										<td>
+											<select v-model="project" class="input-text-fullwidth">
+												<option value="">請選擇</option>
+												<option v-for="x in project_list" v-bind:value="x.name">{{ x.name }}</option>
+											</select>
+										</td>
+										<td>版本<i class="fa fa-asterisk red-star"></i></td>
+										<td>
+											<input type="text" v-model="version" class="input-text-fullwidth"/>
+										</td>
+									</tr>
+									<tr>
+										<td>文件名<i class="fa fa-asterisk red-star"></i></td>
+										<td colspan="7">
+											<input type="text" disabled="true" v-model="file_origin_name" placeholder="默認為上傳文件名" class="input-text-fullwidth"/>
+										</td>
+									</tr>
+									<tr>
+										<td>上傳文件<i class="fa fa-asterisk red-star"></i></td>
+										<td colspan="7">
+											<input type="file" id="file" name="file"/>
+										</td>
+									</tr>
+									<tr>
+										<td>備註說明</td>
+										<td colspan="7">
+											<textarea v-model="memo" class="input-text-fullwidth"></textarea>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="8">
+								<div style="float: left; font-size: 2.625rem;">
+									<i class="fa fa-vcard-o"></i>審核路徑
+								</div>
+								<table class="table table-bordered-center">
+									<tr>
+										<td>
+											DOC發行：
+										</td>
+										<td>
+											胡安才(C3004572)
+										</td>
+										<td>
+											部級主管：
+										</td>
+										<td>
+											向波任(C3005579)
+										</td>
+									</tr>
+									<tr>
+										<td>
+											產工工程師：
+										</td>
+										<td>
+											胡安才(C3004572)
+										</td>
+										<td>
+											SQE審核/製造工程師：
+										</td>
+										<td>
+											向波任(C3005579) => 胡安才(C3004572)
+										</td>
+									</tr>
+									<tr>
+										<td>
+											課級主管：
+										</td>
+										<td>
+											胡安才(C3004572)
+										</td>
+										<td>
+											創建者：
+										</td>
+										<td>
+											向波任(C3005579)
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="8" class="text-center">
+								<button class="btn btn-warning">保存</button>
+								<button class="btn btn-danger">提交</button>
+								<button class="btn btn-default" v-on:click="goBack()">返回</button>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</td>
+			<td style="width: 30%;">
+				<div style="height: 70vh; overflow: auto;">
+					<div class="panel panel-default" style="margin-bottom: 0px;">
+						<div class="panel-heading">
+							<h3 class="panel-title" style="font-weight: bold;">請選擇審核人</h3>
+						</div>
+						<ul class="list-group">
+							<li class="list-group-item">
+								<div>
+									<span style="color: blue; font-weight: bold;">課級主管</span>
+									<span style="float: right;">
+										<button>選簽核人員</button>
+									</span>
+								</div>
+							</li>
+							<li class="list-group-item">
+								<div>
+									<span>&nbsp;</span>
+									<label>
+										胡安才(C3004572)
+										&nbsp;&nbsp;
+									</label>
+									<label>
+										胡安才(C3004572)
+										&nbsp;&nbsp;
+									</label>
+								</div>
+							</li>
+							<li class="list-group-item">
+								<div>
+									<span style="color: blue; font-weight: bold;">SQE審核/製造工程師</span>
+									<span style="float: right;">
+										<button>選簽核人員</button>
+									</span>
+								</div>
+							</li>
+							<li class="list-group-item">
+								<div>
+									<span>&nbsp;</span>
+									<label>
+										胡安才(C3004572)
+										&nbsp;&nbsp;
+									</label>
+									<label>
+										胡安才(C3004572)
+										&nbsp;&nbsp;
+									</label>
+								</div>
+							</li>
+							<li class="list-group-item">
+								<div>
+									<span style="color: blue; font-weight: bold;">產工工程師</span>
+									<span style="float: right;">
+										<button>選簽核人員</button>
+									</span>
+								</div>
+							</li>
+							<li class="list-group-item">
+								<div>
+									<span>&nbsp;</span>
+									<label>
+										胡安才(C3004572)
+										&nbsp;&nbsp;
+									</label>
+									<label>
+										胡安才(C3004572)
+										&nbsp;&nbsp;
+									</label>
+								</div>
+							</li>
+							<li class="list-group-item">
+								<div>
+									<span style="color: blue; font-weight: bold;">部級主管</span>
+									<span style="float: right;">
+										<button>選簽核人員</button>
+									</span>
+								</div>
+							</li>
+							<li class="list-group-item">
+								<div>
+									<span>&nbsp;</span>
+									<label>
+										胡安才(C3004572)
+										&nbsp;&nbsp;
+									</label>
+									<label>
+										胡安才(C3004572)
+										&nbsp;&nbsp;
+									</label>
+								</div>
+							</li>
+							<li class="list-group-item">
+								<div>
+									<span style="color: blue; font-weight: bold;">DOC發行</span>
+									<span style="float: right;">
+										<button>選簽核人員</button>
+									</span>
+								</div>
+							</li>
+							<li class="list-group-item">
+								<div>
+									<span>&nbsp;</span>
+									<label>
+										胡安才(C3004572)
+										&nbsp;&nbsp;
+									</label>
+									<label>
+										胡安才(C3004572)
+										&nbsp;&nbsp;
+									</label>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</td>
+		</tr>
+	</table>
+</div>	
+</body>
+<!-- JS library -->
+<script type="text/javascript" src="js_lib/jquery-1.12.1.js"></script>
+<script type="text/javascript" src="js_lib/bootstrap.min.js"></script>
+<script type="text/javascript" src="js_lib/ajaxfileupload.js"></script>
+<script type="text/javascript" src="js_lib/jquery.fileDownload.js"></script>
+<script type="text/javascript" src="js_lib/laydate.js"></script>
+<script type="text/javascript" src="js_lib/pages.js"></script>
+<script type="text/javascript" src="js_lib/axios.min.js"></script>
+<script type="text/javascript" src="js_lib/vue.js"></script>
+<!-- <script type="text/javascript" src="js_lib/vue.min.js"></script> -->
+<!-- custom JS -->
+<script type="text/javascript" src="js_code/QM_DOC_Edit.js"></script>
+</html>

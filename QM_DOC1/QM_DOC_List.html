@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>QM_DOC_List</title>
+<!-- css library -->
+<link rel="stylesheet" href="css_lib/bootstrap.min.css">
+<link rel="stylesheet" href="./css_lib/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="css_lib/laydate.css">
+<link rel="stylesheet" href="css_lib/pages.css">
+<!-- custom css -->
+<link rel="stylesheet" href="css_code/QM_DOC_List.css">
+</head>
+<body>
+<div id="app">
+	<h3 class="text_center">{{ title }}</h3>
+	<!-- 查詢條件 -->
+	<table class="table table-bordered no_bottom">
+		<tr>
+			<td>
+				文件名：
+			</td>
+			<td>
+				<input type="text" v-model="query_name">
+			</td>
+			<td>
+				廠區：
+			</td>
+			<td>
+				<select v-model="query_factory">
+					<option value="">請選擇</option>
+					<option v-for="x in factory_list" v-bind:value="x.name">{{ x.name }}</option>
+				</select>
+			</td>
+			<td>
+				專案：
+			</td>
+			<td>
+				<select v-model="query_project">
+					<option value="">請選擇</option>
+					<option v-for="x in project_list" v-bind:value="x.name">{{ x.name }}</option>
+				</select>
+			</td>
+		</tr>
+	</table>
+	<!-- 操作區域 -->
+	<div class="text_center">
+		<button class="btn btn-danger" v-on:click="add()">
+			<i class="fa fa-plus"></i>
+			新增
+		</button>
+		<button class="btn btn-default" v-on:click="query(1)">
+			<i class="fa fa-search"></i>
+			條件查詢
+		</button>
+	</div>
+	<!-- 列表內容 -->
+	<div id="table_cont" style="overflow: auto; width: 100%; height: 60vh;">
+		<table class="table table-bordered-xbr table-hover" style="border-collapse: separate;">
+			<tbody>
+				<tr v-for="(x, index) in doc_list">
+					<td>{{ index + 1 }}</td>
+					<td>{{ x.file_origin_name }}</td>
+					<td>{{ x.factory }}</td>
+					<td>{{ x.project }}</td>
+					<td>{{ x.version }}</td>
+					<td>{{ x.memo }}</td>
+					<td>{{ x.creator }}</td>
+					<td>{{ x.create_time }}</td>
+					<td>{{ x.update_time }}</td>
+					<td>
+						<button class="btn btn-default" v-on:click="open_show()">查看</button>
+						<button class="btn btn-default" v-on:click="open_edit()">編輯</button>
+						<button class="btn btn-default" v-on:click="delete_data(x.id)">刪除</button>
+						<button class="btn btn-default" v-on:click="au_record(x.id)">審核記錄</button>
+					</td>
+				</tr>
+			</tbody>
+			<thead>
+				<tr>
+					<th class="thead_top_left">序號</th>
+					<th class="thead_top_left">文件名</th>
+					<th>廠區</th>
+					<th>專案</th>
+					<th>版本</th>
+					<th>備註說明</th>
+					<th>創建人</th>
+					<th>創建時間</th>
+					<th>修改時間</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+		</table>
+	</div>
+	
+	 <!-- 分页DOM -->
+    <div id="pagination" class="pagination"></div>
+	
+</div>
+</body>
+<!-- JS library -->
+<script type="text/javascript" src="js_lib/jquery-1.12.1.js"></script>
+<script type="text/javascript" src="js_lib/bootstrap.min.js"></script>
+<script type="text/javascript" src="js_lib/ajaxfileupload.js"></script>
+<script type="text/javascript" src="js_lib/jquery.fileDownload.js"></script>
+<script type="text/javascript" src="js_lib/laydate.js"></script>
+<script type="text/javascript" src="js_lib/pages.js"></script>
+<script type="text/javascript" src="js_lib/axios.min.js"></script>
+<script type="text/javascript" src="js_lib/vue.js"></script>
+<!-- <script type="text/javascript" src="js_lib/vue.min.js"></script> -->
+<!-- custom JS -->
+<script type="text/javascript" src="js_code/QM_DOC_List.js"></script>
+</html>

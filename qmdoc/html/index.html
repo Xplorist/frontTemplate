@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>index</title>
+<!-- css library -->
+<link rel="stylesheet" href="../lib/bootstrap-3.3.7-dist/css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="../lib/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../lib/font-awesome-4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="../lib/page/pages.css">
+<!-- custom css -->
+<link rel="stylesheet" href="./css/boostrap-table-xbr.css">
+<link rel="stylesheet" href="./css/index.css">
+</head>
+<body>
+<div id="app">
+	<div id="header">
+		<h1>{{ title }}</h1>
+	</div>
+	<div id="content" class="container">
+		<!-- 查詢條件標題 -->
+		<div class="row">
+			<div class="col-lg-12 div-border div-title">
+				<i class="fa fa-newspaper-o"></i>
+				查詢條件
+			</div>
+		</div>
+		<!-- 查詢條件內容 -->
+		<div class="row div-border">
+			<div class="col-lg-4 div-border">
+				文件名：<input type="text" v-model="name" placeholder="請輸入文件名" class="input-fullwidth"/>
+			</div>
+			<div class="col-lg-4 div-border">
+				廠區：
+				<select v-model="factory" class="input-fullwidth">
+					<option value="">請選擇</option>
+					<option v-for="x in factoryList" v-bind:value="x.name">{{ x.name }}</option>
+				</select>
+			</div>
+			<div class="col-lg-4 div-border">
+				專案：
+				<select v-model="project" class="input-fullwidth">
+					<option value="">請選擇</option>
+					<option v-for="x in projectList" v-bind:value="x.name">{{ x.name }}</option>
+				</select>
+			</div>
+		</div>
+		<!-- 操作按鈕 -->
+		<div class="row div-border">
+			<div class="col-lg-12 div-center">
+				<button class="btn btn-danger">
+					<i class="fa fa-plus"></i>新增
+				</button>
+				<button class="btn btn-info">
+					<i class="fa fa-search"></i>查詢
+				</button>
+			</div>
+		</div>
+		<!-- 查詢結果標題 -->
+		<div class="row div-border div-title">
+			<div class="col-lg-12">
+				<i class="fa fa-calendar"></i>查詢結果
+			</div>
+		</div>
+		<!-- 查詢結果內容 -->
+		<div class="row div-border">
+			<div id="table_cont" class="col-lg-12">
+				<table class="table table-bordered-xbr table-hover table-border-separate">
+					<tbody>
+						<tr v-for="(x, index) in doc_list">
+							<td class="tbody_left">
+								<button class="btn btn-default">查看</button>
+								<button class="btn btn-default">編輯</button>
+								<button class="btn btn-default">刪除</button>
+								<button class="btn btn-default">審核記錄</button>
+							</td>
+							<td class="tbody_left">{{ index + 1 }}</td>
+							<td class="tbody_left">{{ x.file_origin_name }}</td>
+							<td>{{ x.factory }}</td>
+							<td>{{ x.project }}</td>
+							<td>{{ x.version }}</td>
+							<td>{{ x.memo }}</td>
+							<td>{{ x.creator }}</td>
+							<td>{{ x.create_time }}</td>
+							<td>{{ x.update_time }}</td>
+						</tr>
+					</tbody>
+					<thead>
+						<tr>
+							<th class="thead_top_left">操作</th>
+							<th class="thead_top_left">序號</th>
+							<th class="thead_top_left">文件名</th>
+							<th class="th-background-color">廠區</th>
+							<th class="th-background-color">專案</th>
+							<th class="th-background-color">版本</th>
+							<th class="th-background-color">備註說明</th>
+							<th class="th-background-color">創建人</th>
+							<th class="th-background-color">創建時間</th>
+							<th class="th-background-color">修改時間</th>
+						</tr>
+					</thead>
+				</table>
+			</div>
+			<!-- 分页DOM -->
+			<div id="pagination" class="pagination"></div>
+		</div>
+	</div>
+	<div id="footer">
+		<div class="div-center">
+			版权 © Mac(I)新產品開發系統
+		</div>
+	</div>
+</div>
+</body>
+<!-- JS library -->
+<script type="text/javascript" src="../lib/jquery-1.12.4/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../lib/axios-0.19.1-dist/axios.min.js"></script>
+<script type="text/javascript" src="../lib/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../lib/vue-2.6.11/vue.min.js"></script>
+<script type="text/javascript" src="../lib/page/pages.js"></script>
+<!-- custom JS -->
+<script type="text/javascript" src="./js/index.js"></script>
+</html>
